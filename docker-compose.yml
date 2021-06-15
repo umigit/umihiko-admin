@@ -1,6 +1,17 @@
 version: '3'
 
 services:
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx/log:/var/log/nginx/
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - admin
+
   admin:
     build:
       context: .
@@ -9,17 +20,9 @@ services:
     volumes:
       - .:/var/www
       - node_modules-admin:/var/www/node_modules
-    networks:
-      umihiko-server_default:
     stdin_open: true
     tty: true
     command: yarn start
-    ports:
-      - 3001:3000
 
 volumes:
   node_modules-admin:
-
-networks:
-  umihiko-server_default:
-    external: true
